@@ -1,0 +1,14 @@
+{
+  "name": "sprint.chatterbox-client",
+  "version": "1.0.0",
+  "description": "This assignment constitutes the beginning of a multi-sprint journey exploring client-server architecture. Today, you'll build a chat client that allows you to communicate with your fellow students. You'll do this using `$.ajax` to send (POST) and fetch (GET) JSON data to and from a remote server.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "cors": "^2.7.1",
+    "express": "^4.13.3"
+  }
+}
