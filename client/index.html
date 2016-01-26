@@ -1,29 +1,44 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>chatterbox</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <link rel="stylesheet" href="styles/styles.css">
 
-    <!-- dependencies -->
-    <script src="bower_components/jquery/jquery.min.js"></script>
-    <script src="bower_components/underscore/underscore-min.js"></script>
-    <!-- your scripts -->
-    <script src="env/config.js"></script>
-    <script src="scripts/app.js"></script>
-  </head>
-  <body>
-    <div id="main">
+<head>
+  <meta charset="utf-8">
+  <title>chatterbox</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <link rel="stylesheet" href="styles/styles.css">
+
+  <!-- dependencies -->
+  <script src="bower_components/jquery/jquery.min.js"></script>
+  <script src="bower_components/underscore/underscore-min.js"></script>
+  <!-- your scripts -->
+  <script src="env/config.js"></script>
+  <script src="scripts/app.js"></script>
+</head>
+
+<body>
+
+  <div id="main">
+    <div class="user-info">You are signed in as...
+    </div>
+    <div class="mainContent">
       <h1>chatterbox</h1>
       <form>
-        <textarea rows="4" cols="50" name="message" placeholder="Your message here"></textarea>
-        <br>
-        <button class="send-button" type="submit" value="Post Message">
-        <select class="room-names">
-          <option value="Room">
+        <textarea id="message-text" class="form-control" rows="4" cols="50" name="message" placeholder="Your message here"></textarea>
+        <button class="send-button btn btn-primary" type="button">Post Message</button>
+        <select id="room-name" class="room-names form-control">
+          <option value="null">All Rooms</option>
+          <option value="lobby">lobby</option>
+          <option value="newRoom">New Room</option>
+        </select>
+        <!-- We can toggle class for this input box, so user can add room -->
+        <input class="form-control hidden" id="addRoom" placeholder="room name">
       </form>
       <!-- Your HTML goes here! -->
     </div>
-  </body>
+</body>
+<script>
+  $(document).ready(function() {
+    app.init();
+  });
+  </script>
 </html>
