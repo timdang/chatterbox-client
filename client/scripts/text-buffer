@@ -27,3 +27,16 @@ $.ajax({
     console.log('chatterbox: Failed to fetch data. Error');
   }
 });
+
+data.filter(function(message) {
+  if (selectedRoom === 'All Rooms') {
+    return true;
+  } else if (message.roomname === selectedRoom) {
+    return true;
+  } else {
+    return false;
+  }
+
+  data.filter(function(message) {
+    return (selectedRoom === 'All Rooms') || message.roomname === selectedRoom)
+  }

@@ -26,12 +26,9 @@
         <textarea id="message-text" class="form-control" rows="4" cols="50" name="message" placeholder="Your message here"></textarea>
         <button class="send-button btn btn-primary" type="button">Post Message</button>
         <select id="room-name" class="room-names form-control">
-          <option value="null">All Rooms</option>
-          <option value="lobby">lobby</option>
-          <option value="newRoom">New Room</option>
         </select>
         <!-- We can toggle class for this input box, so user can add room -->
-        <input class="form-control hidden" id="addRoom" placeholder="room name">
+        <input type="text" class="form-control hidden" id="add-room" placeholder="room name">
       </form>
       <!-- Your HTML goes here! -->
     </div>
@@ -40,5 +37,6 @@
   $(document).ready(function() {
     app.init();
   });
-  </script>
+</script>
+
 </html>

@@ -1,8 +1,26 @@
-var app = {};
+var app = {
+  users: {},
+  rooms: {
+    'New Room': 'New Room'
+  }
+};
+
 app.server = 'https://api.parse.com/1/classes/chatterbox';
 
 app.init = function() {
-  app.fetch(app.populate, '?order=-createdAt');
+  app.fetch(function(data) {
+    app.populate(data);
+    data.forEach(function(message) {
+      if (message.roomname === undefined) {
+        message.roomname = 'All Rooms';
+      }
+      if (app.rooms[message.roomname] === undefined) {
+        app.addRoom(message.roomname);
+        app.rooms[message.roomname] = message.roomname;
+      }
+    });
+    $('#room-name').append('<option>New Room<option>');
+  }, '?order=-createdAt');
 
   // Collect username from initial load
   var username = window.location.search.slice(window.location.search.indexOf('=') + 1);
@@ -12,23 +30,23 @@ app.init = function() {
     app.handleSubmit(username);
   });
 
-  $('#room-name').children('options').on('click', function() {
-    //when new room is selected
-
-    //when existing room is selected
+  $('#room-name').on('change', function() {
     var selectedRoom = $('#room-name option:selected').text();
+    //when new room is selected
+    if (selectedRoom === 'New Room') {
+      $('#add-room').removeClass('hidden');
+    }
 
     // Clear and populate with messages filtered by roomname.
     app.fetch(function(data) {
       app.clearMessages();
-      app.populate(
-        data.filter(function(message) {
-          if (message.roomname === selectedRoom) {
-            return message;
-          }
-        })
-      );
-    });
+
+      var selectedRoomMessages = data.filter(function(message) {
+        return (selectedRoom === 'All Rooms' || message.roomname === selectedRoom);
+      });
+
+      app.populate(selectedRoomMessages);
+    }, '?order=-createdAt');
   });
 };
 
@@ -37,7 +55,7 @@ app.populate = function(data) {
   for (var i = 0; i < data.length; i++) {
     $main.append('<div class="' + data[i].roomname +
       '"><p>Name: ' + data[i].username +
-      '<br>Message: ' + data[i].text + '</p><div>');
+      '<br>Message: ' + data[i].text + '<br>Room: ' + data[i].roomname + '</p><div>');
   }
 };
 
@@ -84,20 +102,29 @@ app.addMessage = function(username, text, roomname) {
   }, function(data) {
     app.clearMessages();
     app.fetch(app.populate, '?order=-createdAt');
+    $('#message-text').val('');
   });
 };
 
-app.addRoom = function() {};
+app.addRoom = function(roomname) {
+  $('#room-name').append('<option>' + roomname + '</option>');
+};
 
 app.addFriend = function() {};
 
 app.handleSubmit = function(username) {
+  var roomname = $('#add-room').val() || $('#room-name option:selected').text();
   app.addMessage(
     //username
     username,
     //text
     $('#message-text').val(),
     //roomname
-    $('#room-name option:selected').text()
+    roomname
   );
+  if (!app.rooms[roomname]) {
+    app.addRoom(roomname);
+  }
+  app.rooms[roomname] = roomname;
+  $('#add-room').val('').addClass('hidden');
 };
