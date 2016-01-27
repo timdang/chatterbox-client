@@ -67,10 +67,7 @@ form input[type=text] {
 
 .chat .username {
     font-weight: 800;
-}
-
-.chat:hover {
-    background-color: #ddd;
+    background-color: #a1a1a1;
 }
 
 .spinner {
@@ -84,4 +81,9 @@ form input[type=text] {
 }
 textarea {
   resize: none;
+}
+
+.bolded {
+  font-size: 150%;
+  background-color: #a1a1a1;
 }

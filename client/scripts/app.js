@@ -30,13 +30,21 @@ app.init = function() {
 app.populate = function(data) {
   var $main = $('.mainContent');
   for (var i = 0; i < data.length; i++) {
-        $main.append('<div class="' + data[i].roomname +
-      '"><p>Name: ' + app.escaped(data[i].username) +
-      '<br>Message: ' + app.escaped(data[i].text) + '<br>Room: ' + app.escaped(data[i].roomname) + '</p><div>');
+    var $newDiv = $('<div class="' + app.escaped(data[i].roomname) + ' ' + app.escaped(data[i].username) + ' chat"></div>');
+    $newDiv.append('Name: <a href="#" class="' + data[i].username + '">' + app.escaped(data[i].username));
+    $newDiv.append('<p>Message: ' + app.escaped(data[i].text) + '<br>');
+    $newDiv.append('Room: ' + app.escaped(data[i].roomname));
+
+    if (app.users[data[i].username] === true) {
+      $newDiv.addClass('bolded');
+    }
+
+    $main.append($newDiv);
   }
+  app.friendListener();
 };
 
-app.escaped = function(string){
+app.escaped = function(string) {
   var entityMap = {
     "&": "&amp;",
     "<": "&lt;",
@@ -44,23 +52,23 @@ app.escaped = function(string){
     '"': '&quot;',
     "'": '&#39;',
     "/": '&#x2F;',
-    "{":  '&#123',
-    "}":  '&#125',
-    "[":  '&#91',
-    "]":  '&#93',
-    "!":  '&#33',
-    "`":  '&#96',
-    "@":  '&#64',
-    "$":  '&#36',
-    "%":  '&#37',
-    "(":  '&#40',
-    ")":  '&#41',
-    "=":  '&#61',
-    "+":  '&#43',
+    "{": '&#123',
+    "}": '&#125',
+    "[": '&#91',
+    "]": '&#93',
+    "!": '&#33',
+    "`": '&#96',
+    "@": '&#64',
+    "$": '&#36',
+    "%": '&#37',
+    "(": '&#40',
+    ")": '&#41',
+    "=": '&#61',
+    "+": '&#43',
   };
 
   function escapeHtml(string) {
-    return String(string).replace(/[&<>"'{}!`@$%()=+\/]/g, function (s) {
+    return String(string).replace(/[&<>"'{}!`@$%()=+\/]/g, function(s) {
       return entityMap[s];
     });
   }
@@ -118,7 +126,20 @@ app.addRoom = function(roomname) {
   $('#room-name').append('<option>' + roomname + '</option>');
 };
 
-app.addFriend = function() {};
+app.addFriend = function(friend) {
+  friendString = "." + friend;
+  app.users[friend] = true;
+  $(friendString).toggleClass('bolded');
+};
+
+// Adding friends
+app.friendListener = function() {
+  $('a').on('click', function() {
+    var friend = $(this).attr('class');
+    console.log('friend being passed', friend);
+    app.addFriend(friend);
+  });
+};
 
 app.handleSubmit = function(username) {
   var roomname = $('#add-room').val() || $('#room-name option:selected').text();
