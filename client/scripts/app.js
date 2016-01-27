@@ -2,12 +2,12 @@ var app = {
   users: {},
   rooms: {
     'New Room': 'New Room'
-  }
+  },
+  server: 'https://api.parse.com/1/classes/chatterbox'
 };
 
-app.server = 'https://api.parse.com/1/classes/chatterbox';
-
 app.init = function() {
+  // Populate DOM with initial query
   app.fetch(function(data) {
     app.populate(data);
     data.forEach(function(message) {
@@ -23,40 +23,48 @@ app.init = function() {
   }, '?order=-createdAt');
 
   // Collect username from initial load
-  var username = window.location.search.slice(window.location.search.indexOf('=') + 1);
-  $('.user-info').text('You are signed in as ' + username);
-
-  $('.send-button').on('click', function() {
-    app.handleSubmit(username);
-  });
-
-  $('#room-name').on('change', function() {
-    var selectedRoom = $('#room-name option:selected').text();
-    //when new room is selected
-    if (selectedRoom === 'New Room') {
-      $('#add-room').removeClass('hidden');
-    }
-
-    // Clear and populate with messages filtered by roomname.
-    app.fetch(function(data) {
-      app.clearMessages();
-
-      var selectedRoomMessages = data.filter(function(message) {
-        return (selectedRoom === 'All Rooms' || message.roomname === selectedRoom);
-      });
-
-      app.populate(selectedRoomMessages);
-    }, '?order=-createdAt');
-  });
+  app.username = window.location.search.slice(window.location.search.indexOf('=') + 1);
+  $('.user-info').text('You are signed in as ' + app.username);
 };
 
 app.populate = function(data) {
   var $main = $('.mainContent');
   for (var i = 0; i < data.length; i++) {
-    $main.append('<div class="' + data[i].roomname +
-      '"><p>Name: ' + data[i].username +
-      '<br>Message: ' + data[i].text + '<br>Room: ' + data[i].roomname + '</p><div>');
+        $main.append('<div class="' + data[i].roomname +
+      '"><p>Name: ' + app.escaped(data[i].username) +
+      '<br>Message: ' + app.escaped(data[i].text) + '<br>Room: ' + app.escaped(data[i].roomname) + '</p><div>');
   }
+};
+
+app.escaped = function(string){
+  var entityMap = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': '&quot;',
+    "'": '&#39;',
+    "/": '&#x2F;',
+    "{":  '&#123',
+    "}":  '&#125',
+    "[":  '&#91',
+    "]":  '&#93',
+    "!":  '&#33',
+    "`":  '&#96',
+    "@":  '&#64',
+    "$":  '&#36',
+    "%":  '&#37',
+    "(":  '&#40',
+    ")":  '&#41',
+    "=":  '&#61',
+    "+":  '&#43',
+  };
+
+  function escapeHtml(string) {
+    return String(string).replace(/[&<>"'{}!`@$%()=+\/]/g, function (s) {
+      return entityMap[s];
+    });
+  }
+  return escapeHtml(string);
 };
 
 app.send = function(message, callback) {
@@ -114,6 +122,7 @@ app.addFriend = function() {};
 
 app.handleSubmit = function(username) {
   var roomname = $('#add-room').val() || $('#room-name option:selected').text();
+
   app.addMessage(
     //username
     username,
@@ -122,9 +131,13 @@ app.handleSubmit = function(username) {
     //roomname
     roomname
   );
+
+  // Add a new roomname to the DOM and to the app
   if (!app.rooms[roomname]) {
     app.addRoom(roomname);
   }
   app.rooms[roomname] = roomname;
+
+  // Rehide the add-room text input
   $('#add-room').val('').addClass('hidden');
 };

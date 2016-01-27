@@ -36,6 +36,30 @@
 <script>
   $(document).ready(function() {
     app.init();
+
+    $('.send-button').on('click', function() {
+      app.handleSubmit(app.username);
+    });
+
+    $('#room-name').on('change', function() {
+      var selectedRoom = $('#room-name option:selected').text();
+      //when new room is selected
+      if (selectedRoom === 'New Room') {
+        $('#add-room').removeClass('hidden');
+      }
+
+      // Clear and populate with messages filtered by roomname.
+      app.fetch(function(data) {
+        app.clearMessages();
+
+        var selectedRoomMessages = data.filter(function(message) {
+          return (selectedRoom === 'All Rooms' || message.roomname === selectedRoom);
+        });
+
+        app.populate(selectedRoomMessages);
+      }, '?order=-createdAt');
+    });
+
   });
 </script>
 
